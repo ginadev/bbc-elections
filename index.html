@@ -5,16 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UK 2024 Election Results</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
   <h1>UK 2024 General Election Results</h1>
 
-  <div>
-    <label for="constituency-select">Select Constituency:</label>
-    <select id="constituency-select">
-      <option value="">Loading...</option>
-    </select>
-  </div>
+  <div class="flex">
+    <div>
+        <label for="constituency-select">Select Constituency:</label>
+        <select class="border-2" id="constituency-select">
+        <option value="">Loading...</option>
+        </select>
+    </div>
+
+    <div class="ml-3">
+        <label for="constituency-search">Search Constituency:</label>
+        <input class="border-2" type="text" id="constituency-search" placeholder="Start typing a constituency name..." autocomplete="off">
+    </div>
+</div>
 
   <div id="results-container" class="hidden">
     <h2 id="constituency-name"></h2>
@@ -27,6 +35,7 @@
       <thead>
         <tr>
           <th>Party</th>
+          <th>Candidate Name</th>
           <th>Votes</th>
           <th>Percentage</th>
         </tr>
