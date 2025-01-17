@@ -5,42 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UK 2024 Election Results</title>
   <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Reith:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>UK 2024 General Election Results</h1>
+<body class="font-arial m-5">
 
-  <div class="flex">
+  <h1 class="text-4xl font-bold mb-5">UK 2024 General Election Results</h1>
+
+  <div class="flex space-x-3">
     <div>
-        <label for="constituency-select">Select Constituency:</label>
-        <select class="border-2" id="constituency-select">
+      <label for="constituency-select" class="block mb-1">Select Constituency:</label>
+      <select class="border-2 w-full p-2" id="constituency-select">
         <option value="">Loading...</option>
-        </select>
+      </select>
     </div>
 
-    <div class="ml-3">
-        <label for="constituency-search">Search Constituency:</label>
-        <input class="border-2" type="text" id="constituency-search" placeholder="Start typing a constituency name..." autocomplete="off">
+    <div>
+      <label for="constituency-search" class="block mb-1">Search Constituency:</label>
+      <input class="border-2 w-[400px] p-2" type="text" id="constituency-search" placeholder="Start typing a constituency name..." autocomplete="off">
     </div>
-</div>
+  </div>
 
   <div id="results-container" class="hidden">
-    <h2 id="constituency-name"></h2>
-    <p><strong>Winning Candidate:</strong> <span id="winning-candidate"></span></p>
-    <p><strong>Winning Party:</strong> <span id="winning-party"></span></p>
-    <p><strong>Turnout:</strong> <span id="turnout"></span></p>
+    <h2 id="constituency-name" class="text-2xl font-semibold my-4"></h2>
+    <p><strong class="font-medium text-sm">Turnout:</strong> <span id="turnout"></span></p>
 
-    <h3>Results</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Party</th>
-          <th>Candidate Name</th>
-          <th>Votes</th>
-          <th>Percentage</th>
+    <table class="w-full mt-2 text-center text-sm">
+      <thead class="bg-gray-100">
+        <tr class="divide-x">
+          <th class="font-medium px-4 py-3">Party</th>
+          <th class="font-medium px-4 py-3">Candidate Name</th>
+          <th class="font-medium px-4 py-3">Votes</th>
+          <th class="font-medium px-4 py-3">% Share</th>
         </tr>
       </thead>
-      <tbody id="results-table-body">
+      <tbody id="results-table-body" class="divide-y">
       </tbody>
     </table>
   </div>

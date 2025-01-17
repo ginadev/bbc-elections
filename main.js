@@ -1,12 +1,32 @@
 const API_BASE_URL = "https://jse-assignment.uk/UKGeneral";
 const API_KEY = "0cb064e3487398bf016ceb719e865ad8c229d25575bb3bab";
 
-// Select elements
+const PARTY_COLOURS = new Map([
+  ["Labour", "#E91E0D"],
+  ["Conservative", "#0675C9"],
+  ["Liberal Democrat", "#FF9A01"],
+  ["Scottish National Party", "#FFD02C"],
+  ["Sinn Fein", "#24AA82"],
+  ["Independent", "#FC86C2"],
+  ["Reform UK", "#0DD1E0"],
+  ["Democratic Unionist Party", "#C9235E"],
+  ["Green", "#5FB25F"],
+  ["Plaid Cymru", "#0FE594"],
+  ["Social Democratic & Labour Party", "#224922"],
+  ["Alliance Party", "#D6B429"],
+  ["Ulster Unionist Party", "#3B75A8"],
+  ["Traditional Unionist Voice", "#6DCAD2"],
+  ["Workers Party of Britain", "#529ACC"],
+  ["The Yorkshire Party", "#00B8FD"],
+  ["Alba", "#287599"],
+  ["People Before Profit", "#E8254F"],
+  ["Aontú", "#ECAE8E"],
+  ["Fallback Colour", "#BABABA"]
+]);
+
 const constituencySelect = document.getElementById('constituency-select');
 const resultsContainer = document.getElementById('results-container');
 const constituencyNameEl = document.getElementById('constituency-name');
-const winningCandidateEl = document.getElementById('winning-candidate');
-const winningPartyEl = document.getElementById('winning-party');
 const turnoutEl = document.getElementById('turnout');
 const resultsTableBody = document.getElementById('results-table-body');
 const resultsChartEl = document.getElementById('results-chart');
@@ -21,7 +41,6 @@ async function fetchConstituencies() {
       });
       const constituencies = await response.json();
   
-      // Populate dropdown menu
       constituencySelect.innerHTML = '<option value="">Select Constituency</option>';
       constituencies.forEach(({ gssId, name }) => {
         const option = document.createElement('option');
@@ -30,7 +49,6 @@ async function fetchConstituencies() {
         constituencySelect.appendChild(option);
       });
   
-      // Save the list for autocomplete
       constituenciesList = constituencies.map(({ gssId, name }) => ({ gssId, name }));
   
     } catch (error) {
@@ -50,13 +68,14 @@ async function fetchConstituencies() {
       currentFocus = -1;
       const listContainer = document.createElement('div');
       listContainer.setAttribute('id', `${this.id}-autocomplete-list`);
-      listContainer.setAttribute('class', 'autocomplete-items');
+      listContainer.setAttribute('class', 'autocomplete-items absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg divide-y');
       this.parentNode.appendChild(listContainer);
   
       list
         .filter(({ name }) => name.toLowerCase().includes(val.toLowerCase()))
         .forEach(({ gssId, name }) => {
           const item = document.createElement('div');
+          item.classList.add('cursor-pointer', 'hover:underline', 'p-2')
           item.innerHTML = `<strong>${name.substr(0, val.length)}</strong>${name.substr(val.length)}`;
           item.dataset.gssId = gssId;
           item.innerHTML += `<input type="hidden" value="${name}">`;
@@ -128,7 +147,7 @@ function displayResults(data) {
 
   constituencyNameEl.textContent = name;
   turnoutEl.textContent = turnout;
-
+  console.log(results);
   const sortedResults = results
     .map(({ candidateName, partyName, votes, share }) => ({
       partyName,
@@ -139,24 +158,54 @@ function displayResults(data) {
     .sort((a, b) => b.share - a.share); 
 
     const winner = sortedResults[0];
-  winningCandidateEl.textContent = winner.candidateName;
-  winningPartyEl.textContent = winner.partyName;
   
   resultsTableBody.innerHTML = '';
   sortedResults.forEach(({candidateName, partyName, votes, share }) => {
     const row = document.createElement('tr');
+    row.className = 'grid-item divide-x';
+    if (partyName === winner.partyName && candidateName === winner.candidateName) {
+      row.classList.add('font-bold'); 
+    }
     row.innerHTML = `
-      <td>${partyName}</td>
-      <td>${candidateName || ''}</td>
-      <td>${votes}</td>
-      <td>${share}%</td>
+      <td class="py-2">${partyName}</td>
+      <td class="py-2">${candidateName || ''}</td>
+      <td class="py-2">${votes}</td>
+       <td class="py-2">
+    <div class="flex items-center">
+      <div class="relative w-full h-6 rounded overflow-hidden mr-2">
+        <div 
+          class="progress-bar absolute top-0 left-0 h-6 rounded" 
+          style="width: 0%; background-color: ${PARTY_COLOURS.get(partyName) || PARTY_COLOURS.get('Fallback Colour')};"
+          title="${share}%">
+        </div>
+      </div>
+      <span class="text-xs">${share}%</span>
+    </div>
+  </td>
     `;
     resultsTableBody.appendChild(row);
+    setTimeout(() => {
+      const progressBar = row.querySelector('.progress-bar');
+      progressBar.style.transition = 'width 2s ease';
+      progressBar.style.width = `${share}%`;
+    }, 10);
   });
   resultsContainer.classList.remove('hidden');
+  resultsContainer.style.transition = 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out';
+  resultsContainer.style.opacity = '0';
+  resultsContainer.style.transform = 'scale(0.9)';
+
+  setTimeout(() => {
+    resultsContainer.style.opacity = '1';
+    resultsContainer.style.transform = 'scale(1)';
+  }, 10);
+  
 }
 
 constituencySelect.addEventListener('change', (e) => {
+  resultsContainer.classList.add('hidden');
+  resultsContainer.style.opacity = '0';
+  resultsContainer.style.transform = 'scale(0.9)';
   const gssId = e.target.value;
   if (gssId) {
     fetchConstituencyResults(gssId);
