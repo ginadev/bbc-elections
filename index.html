@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UK Election Results</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>UK General Election Results</h1>
+
+  <div>
+    <label for="constituency-select">Select Constituency:</label>
+    <select id="constituency-select">
+      <option value="">Loading...</option>
+    </select>
+  </div>
+
+  <div id="results-container" class="hidden">
+    <h2 id="constituency-name"></h2>
+    <p><strong>Winning Candidate:</strong> <span id="winning-candidate"></span></p>
+    <p><strong>Winning Party:</strong> <span id="winning-party"></span></p>
+
+    <h3>Results</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Party</th>
+          <th>Votes</th>
+          <th>Percentage</th>
+        </tr>
+      </thead>
+      <tbody id="results-table-body">
+      </tbody>
+    </table>
+
+    <h3>Graphical Representation</h3>
+    <canvas id="results-chart" width="400" height="200"></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
