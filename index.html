@@ -12,7 +12,7 @@
 
   <h1 class="text-4xl font-bold mb-5">UK 2024 General Election Results</h1>
 
-  <div class="flex space-x-3">
+  <div class="flex space-x-3 items-end">
     <div>
       <label for="constituency-select" class="block mb-1">Select Constituency:</label>
       <select class="border-2 w-full p-2" id="constituency-select">
@@ -23,6 +23,9 @@
     <div>
       <label for="constituency-search" class="block mb-1">Search Constituency:</label>
       <input class="border-2 w-[400px] p-2" type="text" id="constituency-search" placeholder="Start typing a constituency name..." autocomplete="off">
+    </div>
+    <div class="border-2 p-2 text-gray-500 cursor-pointer hover:underline" onclick="clearResults()">
+      Clear 
     </div>
   </div>
 

@@ -203,9 +203,7 @@ function displayResults(data) {
 }
 
 constituencySelect.addEventListener('change', (e) => {
-  resultsContainer.classList.add('hidden');
-  resultsContainer.style.opacity = '0';
-  resultsContainer.style.transform = 'scale(0.9)';
+  resetContainer();
   const gssId = e.target.value;
   if (gssId) {
     fetchConstituencyResults(gssId);
@@ -213,6 +211,18 @@ constituencySelect.addEventListener('change', (e) => {
     resultsContainer.classList.add('hidden');
   }
 });
+
+function resetContainer(){
+  resultsContainer.classList.add('hidden');
+  resultsContainer.style.opacity = '0';
+  resultsContainer.style.transform = 'scale(0.9)';
+}
+
+function clearResults(){
+  constituencySelect.value = '';
+  constituencySearch.value = '';
+  resetContainer();
+}
 
 
 fetchConstituencies().then(() => autocomplete(constituencySearch, constituenciesList));
