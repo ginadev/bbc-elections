@@ -7,6 +7,7 @@ const resultsContainer = document.getElementById('results-container');
 const constituencyNameEl = document.getElementById('constituency-name');
 const winningCandidateEl = document.getElementById('winning-candidate');
 const winningPartyEl = document.getElementById('winning-party');
+const turnoutEl = document.getElementById('turnout');
 const resultsTableBody = document.getElementById('results-table-body');
 const resultsChartEl = document.getElementById('results-chart');
 let resultsChart;
@@ -31,14 +32,13 @@ async function fetchConstituencies() {
   }
 }
 
-// Fetch results for a selected constituency
 async function fetchConstituencyResults(gssId) {
   try {
     const response = await fetch(`${API_BASE_URL}/results/${gssId}`, {
       headers: { "x-api-key": API_KEY },
     });
     const results = await response.json();
-
+    console.log(results);
     displayResults(results);
   } catch (error) {
     console.error("Error fetching constituency results:", error);
@@ -46,63 +46,38 @@ async function fetchConstituencyResults(gssId) {
   }
 }
 
-// Display results in the table and chart
+
 function displayResults(data) {
-  const { name, winningCandidate, winningParty, results } = data;
+  const { name, winningCandidate, winningParty, results, turnout } = data;
 
   constituencyNameEl.textContent = name;
   winningCandidateEl.textContent = winningCandidate;
   winningPartyEl.textContent = winningParty;
+  turnoutEl.textContent = turnout;
 
-  // Update the table
   resultsTableBody.innerHTML = '';
-  results.forEach(({ party, votes, percentage }) => {
+  results.forEach(({ partyName, votes, share }) => {
     const row = document.createElement('tr');
     row.innerHTML = `
-      <td>${party}</td>
+      <td>${partyName}</td>
       <td>${votes}</td>
-      <td>${percentage}%</td>
+      <td>${share}%</td>
     `;
     resultsTableBody.appendChild(row);
-  });
-
-  // Update the chart
-  const parties = results.map(r => r.party);
-  const votes = results.map(r => r.votes);
-  if (resultsChart) {
-    resultsChart.destroy();
-  }
-  resultsChart = new Chart(resultsChartEl, {
-    type: 'bar',
-    data: {
-      labels: parties,
-      datasets: [
-        {
-          label: 'Votes',
-          data: votes,
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-    },
   });
 
   resultsContainer.classList.remove('hidden');
 }
 
-// Event listener for constituency selection
 constituencySelect.addEventListener('change', (e) => {
   const gssId = e.target.value;
   if (gssId) {
+    console.log(gssId);
     fetchConstituencyResults(gssId);
   } else {
     resultsContainer.classList.add('hidden');
   }
 });
 
-// Initialize the app
+
 fetchConstituencies();
