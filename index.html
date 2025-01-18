@@ -31,7 +31,7 @@
 
   <div class="flex space-x-3 items-end">
     <div>
-      <select class="border-2 w-42 p-2" id="region-select">
+      <select class="border-2 w-42 p-2" onchange="filterConstituencies(this)" id="region-select">
         <option value="">Loading...</option>
       </select>
     </div>
@@ -42,7 +42,7 @@
     </div>
 
     <div>
-      <input class="border-2 w-[400px] p-2" type="text" id="constituency-search" placeholder="Start typing a constituency name..." autocomplete="off">
+      <input class="border-2 w-[300px] p-2" type="text" id="constituency-search" placeholder="Start typing a constituency name..." autocomplete="off">
     </div>
     <div class="border-2 p-2 text-gray-500 cursor-pointer hover:underline" onclick="clearResults()">
       Clear 

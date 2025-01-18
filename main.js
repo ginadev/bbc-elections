@@ -42,7 +42,6 @@ async function loadRegionJSON() {
   try {
     const response = await fetch('https://raw.githubusercontent.com/ginadev/bbc-elections/refs/heads/master/data/constituencyToRegion.json'); 
     regionData = await response.json();
-    console.log(regionData);
   } catch (error) {
     console.error("Error loading JSON data:", error);
   }
@@ -248,6 +247,21 @@ constituencySelect.addEventListener('change', (e) => {
     resultsContainer.classList.add('hidden');
   }
 });
+
+function filterConstituencies(selectElement) {
+  const selectedRegion = selectElement.value;
+  const constituencies = constituencySelect.querySelectorAll('option');
+
+  constituencies.forEach(option => {
+    const constituencyName = option.textContent;
+    const isInRegion = regionData.some(item => item.Constituency === constituencyName && item.Region === selectedRegion);
+    if (!isInRegion) {
+      option.classList.add('hidden');
+    } else {
+      option.classList.remove('hidden');
+    }
+  });
+}
 
 function resetContainer(){
   resultsContainer.classList.add('hidden');
