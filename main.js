@@ -40,7 +40,7 @@ let regionData;
 
 async function loadRegionJSON() {
   try {
-    const response = await fetch('constituencyToRegion.json'); 
+    const response = await fetch('https://raw.githubusercontent.com/ginadev/bbc-elections/refs/heads/master/data/constituencyToRegion.json'); 
     regionData = await response.json();
     console.log(regionData);
   } catch (error) {
