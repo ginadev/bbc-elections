@@ -3,25 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UK 2024 Election Results</title>
+  <title>UK Election Results</title>
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Reith:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="font-arial m-5">
 
-  <h1 class="text-4xl font-bold mb-5">UK 2024 General Election Results</h1>
+  <h1 class="text-2xl font-bold my-8">UK General Election Results</h1>
+    <!-- New Vue Section -->
+    <div id="uk-results" class="p-6 max-w-4xl mx-auto">
+      <h2 class="text-xl font-semibold mb-4">Overall UK Election Results</h2>
+  
+      <!-- Loading Spinner -->
+      <div v-if="loading" class="text-center text-gray-500">
+        Loading overall election results...
+      </div>
+  
+      <!-- Error Message -->
+      <div v-if="error" class="text-red-500 text-center">
+        {{ error }}
+      </div>
+  
+      <!-- Overall Results Table -->
+      <table v-if="!loading && !error" class="table-auto w-full border rounded">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="px-4 py-2 text-left">Party</th>
+            <th class="px-4 py-2 text-left">Seats</th>
+            <th class="px-4 py-2 text-left">Votes</th>
+            <th class="px-4 py-2 text-left">Vote Share</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="result in results" :key="result.party" class="border-t">
+            <td class="px-4 py-2">{{ result.partyName }}</td>
+            <td class="px-4 py-2">{{ result.seats }}</td>
+            <td class="px-4 py-2">{{ result.votes }}</td>
+            <td class="px-4 py-2">{{ result.share }}%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
   <div class="flex space-x-3 items-end">
     <div>
-      <label for="constituency-select" class="block mb-1">Select Constituency:</label>
       <select class="border-2 w-full p-2" id="constituency-select">
         <option value="">Loading...</option>
       </select>
     </div>
 
     <div>
-      <label for="constituency-search" class="block mb-1">Search Constituency:</label>
       <input class="border-2 w-[400px] p-2" type="text" id="constituency-search" placeholder="Start typing a constituency name..." autocomplete="off">
     </div>
     <div class="border-2 p-2 text-gray-500 cursor-pointer hover:underline" onclick="clearResults()">
@@ -30,8 +63,7 @@
   </div>
 
   <div id="results-container" class="hidden">
-    <h2 id="constituency-name" class="text-2xl font-semibold my-4"></h2>
-    <p><strong class="font-medium text-sm">Turnout:</strong> <span id="turnout"></span></p>
+    <h2 id="constituency-name" class="text-lg font-semibold mt-8 mb-3"></h2>
 
     <table class="w-full mt-2 text-center text-sm">
       <thead class="bg-gray-100">
@@ -45,8 +77,10 @@
       <tbody id="results-table-body" class="divide-y">
       </tbody>
     </table>
+    <p class="text-sm mt-5">Turnout: <span id="turnout"></span></p>
   </div>
 
+  <script src="uk-results.js"></script>
   <script src="main.js"></script>
 </body>
 </html>

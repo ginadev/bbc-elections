@@ -2,26 +2,26 @@ const API_BASE_URL = "https://jse-assignment.uk/UKGeneral";
 const API_KEY = "0cb064e3487398bf016ceb719e865ad8c229d25575bb3bab";
 
 const PARTY_COLOURS = new Map([
-  ["Labour", "#E91E0D"],
-  ["Conservative", "#0675C9"],
-  ["Liberal Democrat", "#FF9A01"],
-  ["Scottish National Party", "#FFD02C"],
-  ["Sinn Fein", "#24AA82"],
-  ["Independent", "#FC86C2"],
-  ["Reform UK", "#0DD1E0"],
-  ["Democratic Unionist Party", "#C9235E"],
-  ["Green", "#5FB25F"],
-  ["Plaid Cymru", "#0FE594"],
-  ["Social Democratic & Labour Party", "#224922"],
-  ["Alliance Party", "#D6B429"],
-  ["Ulster Unionist Party", "#3B75A8"],
-  ["Traditional Unionist Voice", "#6DCAD2"],
-  ["Workers Party of Britain", "#529ACC"],
-  ["The Yorkshire Party", "#00B8FD"],
-  ["Alba", "#287599"],
-  ["People Before Profit", "#E8254F"],
-  ["Aontú", "#ECAE8E"],
-  ["Fallback Colour", "#BABABA"]
+  ["LAB", "#E91E0D"],
+  ["CON", "#0675C9"],
+  ["LD", "#FF9A01"],
+  ["SNP", "#FFD02C"],
+  ["SF", "#24AA82"],
+  ["IND", "#FC86C2"],
+  ["REF", "#0DD1E0"],
+  ["DUP", "#C9235E"],
+  ["GRN", "#5FB25F"],
+  ["PC", "#0FE594"],
+  ["SDLP", "#224922"],
+  ["APNI", "#D6B429"],
+  ["UUP", "#3B75A8"],
+  ["TUV", "#6DCAD2"],
+  ["WPB", "#529ACC"],
+  ["YP", "#00B8FD"],
+  ["ALB", "#287599"],
+  ["PBP", "#E8254F"],
+  ["AONT", "#ECAE8E"],
+  ["FALLBACK", "#BABABA"]
 ]);
 
 const constituencySelect = document.getElementById('constituency-select');
@@ -143,13 +143,15 @@ async function fetchConstituencyResults(gssId) {
 
 
 function displayResults(data) {
+  console.log(data)
   const { name, results, turnout } = data;
 
   constituencyNameEl.textContent = name;
   turnoutEl.textContent = turnout;
   console.log(results);
   const sortedResults = results
-    .map(({ candidateName, partyName, votes, share }) => ({
+    .map(({ partyCode, candidateName, partyName, votes, share }) => ({
+      partyCode,
       partyName,
       candidateName,
       votes,
@@ -160,7 +162,7 @@ function displayResults(data) {
     const winner = sortedResults[0];
   
   resultsTableBody.innerHTML = '';
-  sortedResults.forEach(({candidateName, partyName, votes, share }) => {
+  sortedResults.forEach(({partyCode, candidateName, partyName, votes, share }) => {
     const row = document.createElement('tr');
     row.className = 'grid-item divide-x';
     if (partyName === winner.partyName && candidateName === winner.candidateName) {
@@ -175,7 +177,7 @@ function displayResults(data) {
       <div class="relative w-full h-6 rounded overflow-hidden mr-2">
         <div 
           class="progress-bar absolute top-0 left-0 h-6 rounded" 
-          style="width: 0%; background-color: ${PARTY_COLOURS.get(partyName) || PARTY_COLOURS.get('Fallback Colour')};"
+          style="width: 0%; background-color: ${PARTY_COLOURS.get(partyCode) || PARTY_COLOURS.get('FALLBACK')};"
           title="${share}%">
         </div>
       </div>
