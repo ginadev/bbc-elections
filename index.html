@@ -13,39 +13,22 @@
 
   <h1 class="text-2xl font-bold my-8">UK General Election Results</h1>
     <!-- New Vue Section -->
-    <div id="uk-results" class="p-6 max-w-4xl mx-auto">
-      <h2 class="text-xl font-semibold mb-4">Overall UK Election Results</h2>
-  
-      <!-- Loading Spinner -->
+    <div id="uk-results" class="p-6 max-w-4xl mx-auto">  
       <div v-if="loading" class="text-center text-gray-500">
         Loading overall election results...
       </div>
   
-      <!-- Error Message -->
       <div v-if="error" class="text-red-500 text-center">
         {{ error }}
       </div>
   
-      <!-- Overall Results Table -->
-      <table v-if="!loading && !error" class="table-auto w-full border rounded">
-        <thead class="bg-gray-200">
-          <tr>
-            <th class="px-4 py-2 text-left">Party</th>
-            <th class="px-4 py-2 text-left">Seats</th>
-            <th class="px-4 py-2 text-left">Votes</th>
-            <th class="px-4 py-2 text-left">Vote Share</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="result in results" :key="result.party" class="border-t">
-            <td class="px-4 py-2">{{ result.partyName }}</td>
-            <td class="px-4 py-2">{{ result.seats }}</td>
-            <td class="px-4 py-2">{{ result.votes }}</td>
-            <td class="px-4 py-2">{{ result.share }}%</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <div v-if="!loading && !error" class="grid grid-cols-6 gap-4 mb-8">      
+        <div v-for="result in results" :key="result.party" class="flex flex-col font-bold items-center" :style="{ backgroundColor: getPartyColour(result.partyCode).background}">
+          <div class="px-4 py-2" :style="{ color: getPartyColour(result.partyCode).text }">{{ result.partyCode }}</div>
+          <div  class="px-4 py-2 w-full text-center" :style="{ backgroundColor: getPartyColour(result.partyCode).lightBackground }">{{ result.seats }}</div>
+        </div>
+      </div>
+      
 
   <div class="flex space-x-3 items-end">
     <div>

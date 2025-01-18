@@ -91,6 +91,7 @@ async function fetchConstituencies() {
     });
   
     input.addEventListener('keydown', function (e) {
+      constituencySelect.value = ''; 
       const listItems = document.querySelectorAll(`#${this.id}-autocomplete-list div`);
       if (e.keyCode === 40) {
         currentFocus++;
@@ -206,6 +207,7 @@ function displayResults(data) {
 
 constituencySelect.addEventListener('change', (e) => {
   resetContainer();
+  constituencySearch.value = ''; 
   const gssId = e.target.value;
   if (gssId) {
     fetchConstituencyResults(gssId);
