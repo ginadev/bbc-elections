@@ -1,6 +1,7 @@
 const API_BASE_URL = "https://jse-assignment.uk/UKGeneral";
 const API_KEY = "0cb064e3487398bf016ceb719e865ad8c229d25575bb3bab";
 
+
 const PARTY_COLOURS = new Map([
   ["LAB", "#E91E0D"],
   ["CON", "#0675C9"],
@@ -31,8 +32,40 @@ const turnoutEl = document.getElementById('turnout');
 const resultsTableBody = document.getElementById('results-table-body');
 const resultsChartEl = document.getElementById('results-chart');
 const constituencySearch = document.getElementById('constituency-search');
+const regionSelect = document.getElementById('region-select');
 let resultsChart;
 let constituenciesList = [];
+let regionData;
+
+
+async function loadRegionJSON() {
+  try {
+    const response = await fetch('constituencyToRegion.json'); 
+    regionData = await response.json();
+    console.log(regionData);
+  } catch (error) {
+    console.error("Error loading JSON data:", error);
+  }
+}
+
+async function populateRegionDropdown() {
+  await loadRegionJSON(); 
+
+  if (!regionData) return;
+
+  const regions = [...new Set(regionData.map(item => item.Region))];
+
+  regionSelect.innerHTML = '<option value="">Select Region</option>';
+
+  regions.forEach(region => {
+    const option = document.createElement('option');
+    option.value = region;
+    option.textContent = region;
+    regionSelect.appendChild(option);
+  });
+
+}
+
 
 async function fetchConstituencies() {
     try {
@@ -228,5 +261,5 @@ function clearResults(){
   resetContainer();
 }
 
-
+populateRegionDropdown();
 fetchConstituencies().then(() => autocomplete(constituencySearch, constituenciesList));

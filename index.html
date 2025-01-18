@@ -11,9 +11,8 @@
 </head>
 <body class="font-arial m-5">
 
-  <h1 class="text-2xl font-bold my-8">UK General Election Results</h1>
-    <!-- New Vue Section -->
-    <div id="uk-results" class="p-6 max-w-4xl mx-auto">  
+    <div id="uk-results" class="p-6 max-w-4xl mx-auto"> 
+      <h1 class="text-2xl font-bold my-8">UK General Election Results</h1> 
       <div v-if="loading" class="text-center text-gray-500">
         Loading overall election results...
       </div>
@@ -32,7 +31,12 @@
 
   <div class="flex space-x-3 items-end">
     <div>
-      <select class="border-2 w-full p-2" id="constituency-select">
+      <select class="border-2 w-42 p-2" id="region-select">
+        <option value="">Loading...</option>
+      </select>
+    </div>
+    <div>
+      <select class="border-2 w-56 p-2" id="constituency-select">
         <option value="">Loading...</option>
       </select>
     </div>
