@@ -51,8 +51,7 @@ async function populateRegionDropdown() {
   await loadRegionJSON(); 
 
   if (!regionData) return;
-
-  const regions = [...new Set(regionData.map(item => item.Region))];
+  const regions = [...new Set(regionData.map(item => item.Region))].sort();
 
   regionSelect.innerHTML = '<option value="">Select Region</option>';
 
@@ -62,8 +61,8 @@ async function populateRegionDropdown() {
     option.textContent = region;
     regionSelect.appendChild(option);
   });
-
 }
+
 
 
 async function fetchConstituencies() {
@@ -249,6 +248,7 @@ constituencySelect.addEventListener('change', (e) => {
 });
 
 function filterConstituencies(selectElement) {
+  constituencySearch.value = '';
   const selectedRegion = selectElement.value;
   const constituencies = constituencySelect.querySelectorAll('option');
 
@@ -270,9 +270,14 @@ function resetContainer(){
 }
 
 function clearResults(){
+  regionSelect.value='';
   constituencySelect.value = '';
   constituencySearch.value = '';
   resetContainer();
+  const constituencies = constituencySelect.querySelectorAll('option');
+  constituencies.forEach(option => {
+    option.classList.remove('hidden'); 
+  });
 }
 
 populateRegionDropdown();
