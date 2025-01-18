@@ -52,7 +52,6 @@ createApp({
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         this.results = data.results
           .filter((item) => item.seats > 0)
           .map((item) => ({

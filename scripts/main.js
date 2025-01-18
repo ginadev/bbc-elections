@@ -249,6 +249,7 @@ constituencySelect.addEventListener('change', (e) => {
 
 function filterConstituencies(selectElement) {
   constituencySearch.value = '';
+  constituencySelect.value = '';
   const selectedRegion = selectElement.value;
   const constituencies = constituencySelect.querySelectorAll('option');
 
