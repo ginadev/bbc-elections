@@ -175,12 +175,10 @@ async function fetchConstituencyResults(gssId) {
 
 
 function displayResults(data) {
-  console.log(data)
   const { name, results, turnout } = data;
 
   constituencyNameEl.textContent = name;
   turnoutEl.textContent = turnout;
-  console.log(results);
   const sortedResults = results
     .map(({ partyCode, candidateName, partyName, votes, share }) => ({
       partyCode,
