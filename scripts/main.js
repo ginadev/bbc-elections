@@ -72,7 +72,7 @@ async function fetchConstituencies() {
       });
       const constituencies = await response.json();
   
-      constituencySelect.innerHTML = '<option value="">Select Constituency</option>';
+      constituencySelect.innerHTML = '<option id="first-constituency" value="">Select Constituency</option>';
       constituencies.forEach(({ gssId, name }) => {
         const option = document.createElement('option');
         option.value = gssId;
@@ -122,7 +122,8 @@ async function fetchConstituencies() {
     });
   
     input.addEventListener('keydown', function (e) {
-      constituencySelect.value = ''; 
+      constituencySelect.value = '';
+      regionSelect.value = ''; 
       const listItems = document.querySelectorAll(`#${this.id}-autocomplete-list div`);
       if (e.keyCode === 40) {
         currentFocus++;
@@ -230,7 +231,7 @@ function displayResults(data) {
   setTimeout(() => {
     resultsContainer.style.opacity = '1';
     resultsContainer.style.transform = 'scale(1)';
-  }, 10);
+  }, 100);
   
 }
 
@@ -248,8 +249,14 @@ constituencySelect.addEventListener('change', (e) => {
 function filterConstituencies(selectElement) {
   constituencySearch.value = '';
   constituencySelect.value = '';
+  
   const selectedRegion = selectElement.value;
   const constituencies = constituencySelect.querySelectorAll('option');
+  const firstConstituency = document.getElementById('first-constituency');
+  if (firstConstituency) {
+    firstConstituency.textContent = `${selectedRegion} Constituencies`;
+    firstConstituency.value = ''; // Ensure it doesn't act as a selectable value
+  }
 
   constituencies.forEach(option => {
     const constituencyName = option.textContent;
