@@ -8,11 +8,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Reith:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
 </head>
 <body class="font-arial m-5">
 <button class="text-white" onclick="showAdminPanel()">Override</button>
     <div id="uk-results" class="p-6 max-w-4xl mx-auto"> 
-      <h1 class="text-2xl font-bold my-8">UK General Election Results</h1> 
+      <h1 class="text-2xl font-bold my-8">UK General Election Results</h1>
+      
+      <div id="uk-highcharts"></div>
+
       <div v-if="loading" class="text-center text-gray-500">
         Loading overall election results...
       </div>
@@ -21,7 +25,7 @@
         {{ error }}
       </div>
   
-      <div v-if="!loading && !error" class="grid grid-cols-6 gap-4 mb-8">      
+      <div v-if="!loading && !error" class="grid grid-cols-6 mb-8 mx-2">      
         <div v-for="result in results" :key="result.party" class="flex flex-col font-bold items-center" :style="{ backgroundColor: getPartyColour(result.partyCode).background}">
           <div class="px-4 py-2" :style="{ color: getPartyColour(result.partyCode).text }">{{ result.partyCode }}</div>
           <div  class="px-4 py-2 w-full text-center" :style="{ backgroundColor: getPartyColour(result.partyCode).lightBackground }">{{ result.seats }}</div>
@@ -37,7 +41,7 @@
     </div>
     <div>
       <select class="border-2 w-72 p-2 truncate" id="constituency-select">
-        <option id="first-constituency" value="">Select Constituency</option>
+        <option value="">Select Constituency</option>
       </select>
     </div>
 
@@ -88,6 +92,9 @@
      </div> 
   </div>
 
+  <canvas id="myCanvas" width="400" height="400"></canvas>
+
+  <script src="./scripts/highcharts-bar.js"></script>
   <script src="./scripts/uk-results.js"></script>
   <script src="./scripts/main.js"></script>
 </body>

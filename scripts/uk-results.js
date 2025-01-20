@@ -23,7 +23,100 @@ const UK_PARTY_COLOURS = {
   "FALLBACK": { background: "#BABABA", text: "#000000", lightBackground : "#e8e6e6" }
 };
 
-createApp({
+const highchartsApp = createApp({
+  data() {
+    return {
+      results: [],
+      loading: true,
+      error: null,
+    };
+  },
+  computed: {
+    getPartyColour() {
+      return (partyCode) => UK_PARTY_COLOURS[partyCode]?.background || UK_PARTY_COLOURS["FALLBACK"].background;
+    },
+  },
+  methods: {
+    renderChart() {
+      Highcharts.chart('uk-highcharts', {
+        chart: { 
+          type: 'column',
+          
+        },
+        title: { 
+          text: '' 
+        },
+        xAxis: { 
+          categories: this.results.map(item => item.partyName),
+          visible: false,
+          startOnTick: false,
+          endOnTick: false,
+          minPadding: 0, 
+          maxPadding: 0, 
+        },
+        yAxis: { 
+          title: { text: '' }, 
+          labels: { enabled: false }, 
+          gridLineWidth: 0, 
+          visible: false, 
+        },
+        legend: { 
+          enabled: false 
+        },
+        plotOptions: {
+          column: {
+            borderWidth: 0,
+            pointPadding: 0, 
+            groupPadding: 0,
+        
+          }
+        },
+        tooltip: {
+          backgroundColor: '#ffffff',
+          borderColor: '#000000', 
+          borderRadius: 5, 
+          borderWidth: 0, 
+          shadow: false, 
+          style: {
+            color: '#333333', 
+            fontSize: '13px', 
+            fontWeight: 'light', 
+          }
+        },
+        series: [{
+          name: 'Seats',
+          data: this.results.map(item => item.seats),
+          colorByPoint: true,
+          colors: this.results.map(item => this.getPartyColour(item.partyCode)),
+        }],
+        credits: {
+          enabled: false 
+        },
+      });
+    },
+    
+  },
+  mounted() {
+    fetch('https://jse-assignment.uk/UKGeneral/results/', {
+      headers: { 'x-api-key': '0cb064e3487398bf016ceb719e865ad8c229d25575bb3bab',},
+    })
+      .then(response => response.ok ? response.json() : Promise.reject('Failed to fetch'))
+      .then(data => {
+        this.results = data.results
+          .filter(item => item.seats > 0)
+          .map(item => ({ partyCode: item.partyCode || 'Unknown', partyName: item.partyName || 'Unknown', seats: item.seats || 0 }))
+          .sort((a, b) => b.seats - a.seats);
+        this.loading = false;
+        this.renderChart();
+      })
+      .catch(error => {
+        this.error = error;
+        this.loading = false;
+      });
+  },
+}).mount('#uk-highcharts');
+
+const resultsTableApp = createApp({
   data() {
     return {
       results: [],

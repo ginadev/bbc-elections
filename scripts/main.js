@@ -76,7 +76,7 @@ async function fetchConstituencies() {
         headers: { "x-api-key": API_KEY },
       });
       const constituencies = await response.json();
-  
+
       constituencySelect.innerHTML = '<option id="first-constituency" value="">Select Constituency</option>';
       constituencies.forEach(({ gssId, name }) => {
         const option = document.createElement('option');
@@ -288,10 +288,8 @@ function filterConstituencies(selectElement) {
   const selectedRegion = selectElement.value;
   const constituencies = constituencySelect.querySelectorAll('option');
   const firstConstituency = document.getElementById('first-constituency');
-  if (firstConstituency) {
-    firstConstituency.textContent = `${selectedRegion} Constituencies`;
-    firstConstituency.value = ''; // Ensure it doesn't act as a selectable value
-  }
+  firstConstituency.textContent = `${selectedRegion} Constituencies`;
+  firstConstituency.value = '';
 
   constituencies.forEach(option => {
     const constituencyName = option.textContent;
@@ -314,6 +312,8 @@ function clearResults(){
   regionSelect.value='';
   constituencySelect.value = '';
   constituencySearch.value = '';
+  const firstConstituency = document.getElementById('first-constituency');
+  firstConstituency.innerText = 'Select Constituency';
   resetContainer();
   const constituencies = constituencySelect.querySelectorAll('option');
   constituencies.forEach(option => {
