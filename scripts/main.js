@@ -221,7 +221,7 @@ function displayResults(data) {
       const progressBar = row.querySelector('.progress-bar');
       progressBar.style.transition = 'width 2s ease';
       progressBar.style.width = `${share}%`;
-    }, 10);
+    }, 100);
   });
   resultsContainer.classList.remove('hidden');
   resultsContainer.style.transition = 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out';
