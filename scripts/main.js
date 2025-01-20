@@ -84,7 +84,6 @@ async function fetchConstituencies() {
         option.textContent = name;
         constituencySelect.appendChild(option);
       });
-  
       constituenciesList = constituencies.map(({ gssId, name }) => ({ gssId, name }));
   
     } catch (error) {
