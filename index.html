@@ -11,7 +11,6 @@
   <script src="https://code.highcharts.com/highcharts.js"></script>
 </head>
 <body>
-<button class="text-white" onclick="showAdminPanel()">Override</button>
     <div id="uk-results" class="p-6 max-w-4xl mx-auto"> 
       <h1 class="text-2xl font-bold my-8">UK General Election Results</h1>
       
@@ -70,28 +69,7 @@
     </table>
     <p class="text-sm mt-5">Turnout: <span id="turnout"></span></p>
   </div>
-  <div id="admin-form" class="hidden p-4 border rounded-md my-4">
-    <h3 class="text-lg font-bold mb-2">Admin Override</h3>
-    <label for="admin-gssid" class="block mb-2">Constituency GSSID:</label>
-    <input id="admin-gssid" type="text" class="w-full p-2 border rounded-md mb-4" placeholder="Enter GSSID">
-    
-    <label for="admin-override" class="block mb-2">Override Data (JSON):</label>
-    <div class="italic">{
-      "name": "Example Constituency",
-      "turnout": 70,
-      "results": [
-        { "partyCode": "LAB", "candidateName": "John Doe", "partyName": "Labour", "votes": 10000, "share": 50 },
-        { "partyCode": "CON", "candidateName": "John Doe", "partyName": "Conservative", "votes": 8000, "share": 40 }
-      ]
-    }</div>
-    <textarea id="admin-override" rows="6" class="w-full p-2 border rounded-md mb-4"></textarea>
-    
-    <div class="flex justify-between">
-      <button id="apply-override" class="bg-blue-500 text-white px-4 py-2 rounded-md">Apply Override</button>
-      <button class="ml-3 bg-blue-500 text-white px-4 py-2 rounded-md" onclick="hideAdminPanel()">Hide override form</button>
-     </div> 
-  </div>
-
+  
   <script src="./scripts/uk-results.js"></script>
   <script src="./scripts/main.js"></script>
 </body>

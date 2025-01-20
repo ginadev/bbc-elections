@@ -33,10 +33,6 @@ const resultsTableBody = document.getElementById('results-table-body');
 const resultsChartEl = document.getElementById('results-chart');
 const constituencySearch = document.getElementById('constituency-search');
 const regionSelect = document.getElementById('region-select');
-const adminForm = document.getElementById("admin-form");
-const adminGssIdInput = document.getElementById("admin-gssid");
-const adminOverrideInput = document.getElementById("admin-override");
-const applyOverrideBtn = document.getElementById("apply-override");
 let resultsChart;
 let constituenciesList = [];
 let regionData;
@@ -165,36 +161,9 @@ async function fetchConstituencies() {
       });
     };
 
-    applyOverrideBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-    
-      const gssId = adminGssIdInput.value.trim();
-      const overrideData = adminOverrideInput.value.trim();
-    
-      if (!gssId || !overrideData) {
-        alert("Please provide both GSS ID and Override Data.");
-        return;
-      }
-    
-      try {
-        // Parse the override data as JSON
-        const parsedData = JSON.parse(overrideData);
-    
-        // Store the override in memory
-        constituencyOverrides[gssId] = parsedData;
-        alert(`Override applied for constituency with GSS ID: ${gssId}`);
-      } catch (error) {
-        alert("Invalid Override Data. Please ensure it is valid JSON.");
-      }
-    });
+  
 
 async function fetchConstituencyResults(gssId) {
-  console.log(gssId);
-  if (constituencyOverrides[gssId]) {
-    console.log(`Using override data for constituency ${gssId}`);
-    displayResults(constituencyOverrides[gssId]);
-    return;
-  }
   try {
     const response = await fetch(`${API_BASE_URL}/results/${gssId}`, {
       headers: { "x-api-key": API_KEY },
@@ -320,13 +289,6 @@ function clearResults(){
   });
 }
 
-function showAdminPanel(){
-  adminForm.classList.remove("hidden")
-}
-
-function hideAdminPanel(){
-  adminForm.classList.add("hidden");
-}
 
 populateRegionDropdown();
 fetchConstituencies().then(() => autocomplete(constituencySearch, constituenciesList));
