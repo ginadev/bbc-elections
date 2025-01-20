@@ -1,0 +1,57 @@
+
+{
+  "gssId": "E14001273",
+  "name": "Harwich and North Essex",
+  "shortName": "Harwich and North Essex",
+  "county": "Essex",
+  "electorate": 74838,
+  "turnout": 54084,
+  "majority": 17651,
+  "results": [
+      {
+          "partyCode": "3067",
+          "partyName": "Independent",
+          "shortPartyName": "IND",
+          "votes": 263,
+          "share": 0.486281
+      },
+      {
+          "partyCode": "3068",
+          "partyName": "Independent",
+          "shortPartyName": "IND",
+          "votes": 411,
+          "share": 0.759929
+      },
+      {
+          "partyCode": "CON",
+          "partyName": "Conservative",
+          "shortPartyName": "Conservative",
+          "votes": 31668,
+          "share": 58.553361,
+          "candidateName": "Bernard Jenkin"
+      },
+      {
+          "partyCode": "GRN",
+          "partyName": "Green",
+          "shortPartyName": "Green",
+          "votes": 1924,
+          "share": 3.557429
+      },
+      {
+          "partyCode": "LAB",
+          "partyName": "Labour",
+          "shortPartyName": "Labour",
+          "votes": 14017,
+          "share": 25.917092,
+          "candidateName": "Alex Diner"
+      },
+      {
+          "partyCode": "LD",
+          "partyName": "Liberal Democrat",
+          "shortPartyName": "Lib Dem",
+          "votes": 5801,
+          "share": 10.725908,
+          "candidateName": "Natalie Sommers"
+      }
+  ]
+}
