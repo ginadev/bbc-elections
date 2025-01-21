@@ -34,6 +34,11 @@
 
   <div class="flex space-x-3 items-end">
     <div>
+      <select class="border-2 w-48 p-2 truncate" onchange="" id="county-select">
+        <option value="">Select County</option>
+      </select>
+    </div>
+    <div>
       <select class="border-2 w-48 p-2 truncate" onchange="filterConstituencies(this)" id="region-select">
         <option value="">Select Region</option>
       </select>
@@ -71,6 +76,8 @@
     <p class="text-sm mt-5">Turnout: <span id="turnout"></span></p>
   </div>
   </div>
+
+  <div id="county-results-container" class="hidden"></div>
   
   <script src="./scripts/uk-results.js"></script>
   <script src="./scripts/main.js"></script>

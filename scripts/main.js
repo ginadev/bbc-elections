@@ -27,6 +27,8 @@ const PARTY_COLOURS = new Map([
 
 const constituencySelect = document.getElementById('constituency-select');
 const resultsContainer = document.getElementById('results-container');
+const countyResultsContainer = document.getElementById('county-results-container');
+const countySelect = document.getElementById('county-select');
 const constituencyNameEl = document.getElementById('constituency-name');
 const turnoutEl = document.getElementById('turnout');
 const resultsTableBody = document.getElementById('results-table-body');
@@ -36,6 +38,7 @@ const regionSelect = document.getElementById('region-select');
 let resultsChart;
 let constituenciesList = [];
 let regionData;
+let constituencyData;
 const constituencyOverrides = {};
 
 
@@ -62,6 +65,126 @@ async function populateRegionDropdown() {
     option.textContent = region;
     regionSelect.appendChild(option);
   });
+}
+
+async function populateCountyDropdown() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/constituencies`, {
+      headers: { "x-api-key": API_KEY },
+    });
+    constituencyData = await response.json();
+    console.log(constituencyData);
+
+    if (!constituencyData || constituencyData.length === 0) return;
+
+    const uniqueCounties = [...new Set(constituencyData.map(item => item.county))].sort();
+    countySelect.innerHTML = '<option value="">Select County</option>';
+
+    uniqueCounties.forEach(county => {
+      const option = document.createElement('option');
+      option.value = county;
+      option.textContent = county;
+      countySelect.appendChild(option);
+    });
+
+    countySelect.addEventListener('change', (event) => {
+      displayConstituencyResults(event.target.value);
+    });
+
+  } catch (error) {
+    console.error('Error fetching constituency data:', error);
+  }
+}
+
+async function displayConstituencyResults(county) {
+
+  // Clear existing results
+  countyResultsContainer.innerHTML = '';
+  
+  // Filter constituencies by selected county
+  const filteredConstituencies = constituencyData.filter(c => c.county === county);
+  
+  if (filteredConstituencies.length > 0) {
+    for (const constituency of filteredConstituencies) {
+      try {
+        const results = await fetchConstituencyResults(constituency.gssId);
+
+        // Directly use the fetched results
+        const { name, results: constituencyResults, turnout } = results;
+
+        constituencyNameEl.textContent = name;
+        // turnoutElement.textContent = turnout;
+
+        const sortedResults = constituencyResults
+          .map(({ partyCode, candidateName, partyName, votes, share }) => ({
+            partyCode,
+            partyName,
+            candidateName,
+            votes,
+            share: Math.round(share),
+          }))
+          .sort((a, b) => b.share - a.share);
+
+        const winner = sortedResults[0];
+
+        const table = document.createElement('table');
+        table.className = 'w-full mt-2 text-center text-sm';
+
+        const tbody = document.createElement('tbody');
+        tbody.id = 'results-table-body';
+        tbody.className = 'divide-y';
+
+        sortedResults.forEach(({ partyCode, candidateName, partyName, votes, share }) => {
+          const row = document.createElement('tr');
+          row.className = 'grid-item divide-x';
+          if (partyName === winner.partyName && candidateName === winner.candidateName) {
+            row.classList.add('font-bold');
+          }
+          row.innerHTML = `
+            <td class="py-2">${partyName}</td>
+            <td class="py-2">${candidateName || ''}</td>
+            <td class="py-2">${votes}</td>
+            <td class="py-2">
+              <div class="flex items-center">
+                <div class="relative w-full h-6 rounded overflow-hidden mr-2">
+                  <div 
+                    class="progress-bar absolute top-0 left-0 h-6 rounded" 
+                    style="width: 0%; background-color: ${PARTY_COLOURS.get(partyCode) || PARTY_COLOURS.get('FALLBACK')};"
+                    title="${share}%">
+                  </div>
+                </div>
+                <span class="text-xs">${share}%</span>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(row);
+          setTimeout(() => {
+            const progressBar = row.querySelector('.progress-bar');
+            progressBar.style.transition = 'width 2s ease';
+            progressBar.style.width = `${share}%`;
+          }, 100);
+        });
+
+        table.appendChild(tbody);
+        countyResultsContainer.appendChild(table);
+
+        countyResultsContainer.classList.remove('hidden');
+        countyResultsContainer.style.transition = 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out';
+        countyResultsContainer.style.opacity = '0';
+        countyResultsContainer.style.transform = 'scale(0.9)';
+
+        setTimeout(() => {
+          countyResultsContainer.style.opacity = '1';
+          countyResultsContainer.style.transform = 'scale(1)';
+        }, 100);
+
+      } catch (error) {
+        console.error(`Error fetching results for ${constituency.name}:`, error);
+      }
+    }
+  } else {
+    countyResultsContainer.innerHTML = '<p>No results found for this county.</p>';
+  }
 }
 
 
@@ -289,6 +412,6 @@ function clearResults(){
   });
 }
 
-
+populateCountyDropdown();
 populateRegionDropdown();
 fetchConstituencies().then(() => autocomplete(constituencySearch, constituenciesList));
