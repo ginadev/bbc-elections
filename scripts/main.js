@@ -28,10 +28,9 @@ const PARTY_COLOURS = new Map([
 const resultsContainer = document.getElementById('results-container');
 const countySelect = document.getElementById('county-select');
 const constituencySearch = document.getElementById('constituency-search');
+const customConstituenciesData = {};
 let constituenciesData = [];
 let constituenciesList = [];
-
-const customConstituenciesData = {};
 
 
 async function fetchConstituencyData() {
@@ -280,7 +279,7 @@ function clearResults(){
   resetContainer();
 }
 
-// addCustomConstituencyData("E14001126", {
+// addCustomConstituencyData("E14001132", {
 //   name: "Custom Constituency",
 //   results: [
 //     { partyCode: "LAB", partyName: "Labour", candidateName: "John Doe", votes: 5000, share: 45.2 },
