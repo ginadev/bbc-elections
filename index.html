@@ -32,25 +32,14 @@
       </div>
       
 
-  <div class="flex space-x-3 items-end">
+  <div class="flex space-x-3 items-end justify-between">
     <div>
-      <select class="border-2 w-48 p-2 truncate" onchange="" id="county-select">
+      <select class="border-2 p-2 truncate" onchange="" id="county-select">
         <option value="">Select County</option>
       </select>
     </div>
-    <!-- <div>
-      <select class="border-2 w-48 p-2 truncate" onchange="filterConstituencies(this)" id="region-select">
-        <option value="">Select Region</option>
-      </select>
-    </div>
     <div>
-      <select class="border-2 w-72 p-2 truncate" id="constituency-select">
-        <option value="">Select Constituency</option>
-      </select>
-    </div> -->
-
-    <div>
-      <input class="border-2 w-[275px] p-2" type="text" id="constituency-search" placeholder="Start typing a constituency name..." autocomplete="off">
+      <input class="border-2 w-[400px] p-2" type="text" id="constituency-search" placeholder="Start typing a constituency name..." autocomplete="off">
     </div>
     <div class="border-2 p-2 text-gray-500 cursor-pointer hover:underline" onclick="clearResults()">
       Clear 

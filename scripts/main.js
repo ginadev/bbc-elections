@@ -74,6 +74,7 @@ async function populateCountyDropdown() {
 
     countySelect.addEventListener('change', (event) => {
       const selectedCounty = event.target.value;
+      constituencySearch.value = '';
       if (selectedCounty) {
         displayConstituencyResults(selectedCounty);
       }
@@ -126,6 +127,7 @@ async function displayConstituencyResults(county) {
   
           item.addEventListener('click', function () {
             resultsContainer.innerHTML = '';
+            countySelect.value= '';
             input.value = name;
             closeAllLists();
             fetchConstituencyResults(gssId);
@@ -288,6 +290,7 @@ function resetContainer(){
 }
 
 function clearResults(){
+  countySelect.value= '';
   constituencySearch.value = '';
   resetContainer();
 }
