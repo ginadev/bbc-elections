@@ -4,6 +4,13 @@
     font-weight: 400;
     font-display: swap;
   }
+
+  @font-face {
+    font-family: 'Reith';
+    src: url('BBCReithSans_W_Bd.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+  }
   
   body {
     font-family: 'Reith', sans-serif;

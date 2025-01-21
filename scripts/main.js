@@ -31,6 +31,8 @@ const constituencySearch = document.getElementById('constituency-search');
 let constituenciesData = [];
 let constituenciesList = [];
 
+const customConstituenciesData = {};
+
 
 async function fetchConstituencyData() {
   try {
@@ -149,15 +151,22 @@ const autocomplete = (input, list) => {
 
 async function fetchConstituencyResults(gssId) {
   try {
-    const response = await fetch(`${API_BASE_URL}/results/${gssId}`, {
-      headers: { "x-api-key": API_KEY },
-    });
-    const results = await response.json();
-    displayResults(results);
+    const data = customConstituenciesData[gssId]
+      ? customConstituenciesData[gssId]
+      : await fetchConstituencyResultsFromAPI(gssId);
+    console.log(data);
+    displayResults(data);
   } catch (error) {
     console.error("Error fetching constituency results:", error);
     alert("Failed to load constituency results.");
   }
+}
+
+async function fetchConstituencyResultsFromAPI(gssId) {
+  const response = await fetch(`${API_BASE_URL}/results/${gssId}`, {
+    headers: { "x-api-key": API_KEY },
+  });
+  return await response.json();
 }
 
 
@@ -252,6 +261,10 @@ function displayResults(data) {
   }, 100);
 }
 
+function addCustomConstituencyData(gssId, data) {
+  customConstituenciesData[gssId] = data;
+}
+
 
 function resetContainer(){
   resultsContainer.style.transition = 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out';
@@ -266,5 +279,14 @@ function clearResults(){
   constituencySearch.value = '';
   resetContainer();
 }
+
+// addCustomConstituencyData("E14001126", {
+//   name: "Custom Constituency",
+//   results: [
+//     { partyCode: "LAB", partyName: "Labour", candidateName: "John Doe", votes: 5000, share: 45.2 },
+//     { partyCode: "CON", partyName: "Conservative", candidateName: "Jane Smith", votes: 4500, share: 40.8 },
+//   ],
+//   turnout: "75%",
+// });
 
 fetchConstituencyData();

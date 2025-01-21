@@ -80,7 +80,6 @@ const highchartsApp = createApp({
           style: {
             color: '#333333', 
             fontSize: '13px', 
-            fontWeight: 'light', 
           }
         },
         series: [{
