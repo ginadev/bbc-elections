@@ -25,16 +25,12 @@ const PARTY_COLOURS = new Map([
   ["FALLBACK", "#BABABA"]
 ]);
 
-const constituencySelect = document.getElementById('constituency-select');
 const resultsContainer = document.getElementById('results-container');
 const countyResultsContainer = document.getElementById('county-results-container');
 const countySelect = document.getElementById('county-select');
-const constituencyNameEl = document.getElementById('constituency-name');
-const turnoutEl = document.getElementById('turnout');
 const resultsTableBody = document.getElementById('results-table-body');
 const resultsChartEl = document.getElementById('results-chart');
 const constituencySearch = document.getElementById('constituency-search');
-const regionSelect = document.getElementById('region-select');
 let resultsChart;
 let constituenciesList = [];
 let regionData;
@@ -42,30 +38,20 @@ let constituencyData;
 const constituencyOverrides = {};
 
 
-async function loadRegionJSON() {
+async function fetchConstituencies() {
   try {
-    const response = await fetch('https://raw.githubusercontent.com/ginadev/bbc-elections/refs/heads/master/data/constituencyToRegion.json'); 
-    regionData = await response.json();
+    const response = await fetch(`${API_BASE_URL}/constituencies`, {
+      headers: { "x-api-key": API_KEY },
+    });
+    const constituencies = await response.json();
+    constituenciesList = constituencies.map(({ gssId, name }) => ({ gssId, name }));
+
   } catch (error) {
-    console.error("Error loading JSON data:", error);
+    console.error("Error fetching constituencies:", error);
+    alert("Failed to load constituencies.");
   }
 }
 
-async function populateRegionDropdown() {
-  await loadRegionJSON(); 
-
-  if (!regionData) return;
-  const regions = [...new Set(regionData.map(item => item.Region))].sort();
-
-  regionSelect.innerHTML = '<option value="">Select Region</option>';
-
-  regions.forEach(region => {
-    const option = document.createElement('option');
-    option.value = region;
-    option.textContent = region;
-    regionSelect.appendChild(option);
-  });
-}
 
 async function populateCountyDropdown() {
   try {
@@ -74,7 +60,6 @@ async function populateCountyDropdown() {
     });
     constituencyData = await response.json();
     console.log(constituencyData);
-
     if (!constituencyData || constituencyData.length === 0) return;
 
     const uniqueCounties = [...new Set(constituencyData.map(item => item.county))].sort();
@@ -88,128 +73,33 @@ async function populateCountyDropdown() {
     });
 
     countySelect.addEventListener('change', (event) => {
-      displayConstituencyResults(event.target.value);
+      const selectedCounty = event.target.value;
+      if (selectedCounty) {
+        displayConstituencyResults(selectedCounty);
+      }
     });
-
   } catch (error) {
     console.error('Error fetching constituency data:', error);
   }
 }
 
+
 async function displayConstituencyResults(county) {
+  try {
+    const constituenciesInCounty = constituencyData.filter(item => item.county === county);
 
-  // Clear existing results
-  countyResultsContainer.innerHTML = '';
-  
-  // Filter constituencies by selected county
-  const filteredConstituencies = constituencyData.filter(c => c.county === county);
-  
-  if (filteredConstituencies.length > 0) {
-    for (const constituency of filteredConstituencies) {
-      try {
-        const results = await fetchConstituencyResults(constituency.gssId);
+    if (!constituenciesInCounty || constituenciesInCounty.length === 0) return;
 
-        // Directly use the fetched results
-        const { name, results: constituencyResults, turnout } = results;
+    resultsContainer.innerHTML = '';
 
-        constituencyNameEl.textContent = name;
-        // turnoutElement.textContent = turnout;
-
-        const sortedResults = constituencyResults
-          .map(({ partyCode, candidateName, partyName, votes, share }) => ({
-            partyCode,
-            partyName,
-            candidateName,
-            votes,
-            share: Math.round(share),
-          }))
-          .sort((a, b) => b.share - a.share);
-
-        const winner = sortedResults[0];
-
-        const table = document.createElement('table');
-        table.className = 'w-full mt-2 text-center text-sm';
-
-        const tbody = document.createElement('tbody');
-        tbody.id = 'results-table-body';
-        tbody.className = 'divide-y';
-
-        sortedResults.forEach(({ partyCode, candidateName, partyName, votes, share }) => {
-          const row = document.createElement('tr');
-          row.className = 'grid-item divide-x';
-          if (partyName === winner.partyName && candidateName === winner.candidateName) {
-            row.classList.add('font-bold');
-          }
-          row.innerHTML = `
-            <td class="py-2">${partyName}</td>
-            <td class="py-2">${candidateName || ''}</td>
-            <td class="py-2">${votes}</td>
-            <td class="py-2">
-              <div class="flex items-center">
-                <div class="relative w-full h-6 rounded overflow-hidden mr-2">
-                  <div 
-                    class="progress-bar absolute top-0 left-0 h-6 rounded" 
-                    style="width: 0%; background-color: ${PARTY_COLOURS.get(partyCode) || PARTY_COLOURS.get('FALLBACK')};"
-                    title="${share}%">
-                  </div>
-                </div>
-                <span class="text-xs">${share}%</span>
-              </div>
-            </td>
-          `;
-          tbody.appendChild(row);
-          setTimeout(() => {
-            const progressBar = row.querySelector('.progress-bar');
-            progressBar.style.transition = 'width 2s ease';
-            progressBar.style.width = `${share}%`;
-          }, 100);
-        });
-
-        table.appendChild(tbody);
-        countyResultsContainer.appendChild(table);
-
-        countyResultsContainer.classList.remove('hidden');
-        countyResultsContainer.style.transition = 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out';
-        countyResultsContainer.style.opacity = '0';
-        countyResultsContainer.style.transform = 'scale(0.9)';
-
-        setTimeout(() => {
-          countyResultsContainer.style.opacity = '1';
-          countyResultsContainer.style.transform = 'scale(1)';
-        }, 100);
-
-      } catch (error) {
-        console.error(`Error fetching results for ${constituency.name}:`, error);
-      }
+    for (const constituency of constituenciesInCounty) {
+     await fetchConstituencyResults(constituency.gssId);
     }
-  } else {
-    countyResultsContainer.innerHTML = '<p>No results found for this county.</p>';
+  } catch (error) {
+    console.error('Error displaying constituency results:', error);
   }
 }
 
-
-
-async function fetchConstituencies() {
-    try {
-      const response = await fetch(`${API_BASE_URL}/constituencies`, {
-        headers: { "x-api-key": API_KEY },
-      });
-      const constituencies = await response.json();
-
-      constituencySelect.innerHTML = '<option id="first-constituency" value="">Select Constituency</option>';
-      constituencies.forEach(({ gssId, name }) => {
-        const option = document.createElement('option');
-        option.value = gssId;
-        option.textContent = name;
-        constituencySelect.appendChild(option);
-      });
-      constituenciesList = constituencies.map(({ gssId, name }) => ({ gssId, name }));
-  
-    } catch (error) {
-      console.error("Error fetching constituencies:", error);
-      alert("Failed to load constituencies.");
-    }
-  }
 
   const autocomplete = (input, list) => {
     let currentFocus;
@@ -235,6 +125,7 @@ async function fetchConstituencies() {
           item.innerHTML += `<input type="hidden" value="${name}">`;
   
           item.addEventListener('click', function () {
+            resultsContainer.innerHTML = '';
             input.value = name;
             closeAllLists();
             fetchConstituencyResults(gssId);
@@ -245,8 +136,6 @@ async function fetchConstituencies() {
     });
   
     input.addEventListener('keydown', function (e) {
-      constituencySelect.value = '';
-      regionSelect.value = ''; 
       const listItems = document.querySelectorAll(`#${this.id}-autocomplete-list div`);
       if (e.keyCode === 40) {
         currentFocus++;
@@ -292,7 +181,6 @@ async function fetchConstituencyResults(gssId) {
       headers: { "x-api-key": API_KEY },
     });
     const results = await response.json();
-    console.log(results)
     displayResults(results);
   } catch (error) {
     console.error("Error fetching constituency results:", error);
@@ -304,51 +192,83 @@ async function fetchConstituencyResults(gssId) {
 function displayResults(data) {
   const { name, results, turnout } = data;
 
+  const constituencyNameEl = document.createElement('h2');
+  constituencyNameEl.id = 'constituency-name';
+  constituencyNameEl.className = 'text-lg font-semibold mt-8 mb-3';
   constituencyNameEl.textContent = name;
-  turnoutEl.textContent = turnout;
+
+  const table = document.createElement('table');
+  table.className = 'w-full mt-2 text-center text-sm';
+
+  const thead = document.createElement('thead');
+  thead.className = 'bg-gray-100';
+  thead.innerHTML = `
+    <tr class="divide-x">
+      <th class="font-medium px-4 py-3">Party</th>
+      <th class="font-medium px-4 py-3">Candidate Name</th>
+      <th class="font-medium px-4 py-3">Votes</th>
+      <th class="font-medium px-4 py-3">% Share</th>
+    </tr>
+  `;
+  table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+  tbody.id = 'results-table-body';
+  tbody.className = 'divide-y';
+
   const sortedResults = results
     .map(({ partyCode, candidateName, partyName, votes, share }) => ({
       partyCode,
       partyName,
       candidateName,
       votes,
-      share: Math.round(share), 
+      share: Math.round(share),
     }))
-    .sort((a, b) => b.share - a.share); 
+    .sort((a, b) => b.share - a.share);
 
-    const winner = sortedResults[0];
-  
-  resultsTableBody.innerHTML = '';
-  sortedResults.forEach(({partyCode, candidateName, partyName, votes, share }) => {
+  const winner = sortedResults[0];
+
+  sortedResults.forEach(({ partyCode, candidateName, partyName, votes, share }) => {
     const row = document.createElement('tr');
     row.className = 'grid-item divide-x';
     if (partyName === winner.partyName && candidateName === winner.candidateName) {
-      row.classList.add('font-bold'); 
+      row.classList.add('font-bold');
     }
     row.innerHTML = `
       <td class="py-2">${partyName}</td>
       <td class="py-2">${candidateName || ''}</td>
       <td class="py-2">${votes}</td>
-       <td class="py-2">
-    <div class="flex items-center">
-      <div class="relative w-full h-6 rounded overflow-hidden mr-2">
-        <div 
-          class="progress-bar absolute top-0 left-0 h-6 rounded" 
-          style="width: 0%; background-color: ${PARTY_COLOURS.get(partyCode) || PARTY_COLOURS.get('FALLBACK')};"
-          title="${share}%">
+      <td class="py-2">
+        <div class="flex items-center">
+          <div class="relative w-full h-6 rounded overflow-hidden mr-2">
+            <div 
+              class="progress-bar absolute top-0 left-0 h-6 rounded" 
+              style="width: 0%; background-color: ${PARTY_COLOURS.get(partyCode) || PARTY_COLOURS.get('FALLBACK')};"
+              title="${share}%">
+            </div>
+          </div>
+          <span class="text-xs">${share}%</span>
         </div>
-      </div>
-      <span class="text-xs">${share}%</span>
-    </div>
-  </td>
+      </td>
     `;
-    resultsTableBody.appendChild(row);
+    tbody.appendChild(row);
     setTimeout(() => {
       const progressBar = row.querySelector('.progress-bar');
       progressBar.style.transition = 'width 2s ease';
       progressBar.style.width = `${share}%`;
     }, 100);
   });
+
+  table.appendChild(tbody);
+
+  const turnoutEl = document.createElement('p');
+  turnoutEl.className = 'text-sm mt-5';
+  turnoutEl.innerHTML = `Turnout: <span>${turnout}</span>`;
+
+  resultsContainer.appendChild(constituencyNameEl);
+  resultsContainer.appendChild(table);
+  resultsContainer.appendChild(turnoutEl);
+
   resultsContainer.classList.remove('hidden');
   resultsContainer.style.transition = 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out';
   resultsContainer.style.opacity = '0';
@@ -358,40 +278,8 @@ function displayResults(data) {
     resultsContainer.style.opacity = '1';
     resultsContainer.style.transform = 'scale(1)';
   }, 100);
-  
 }
 
-constituencySelect.addEventListener('change', (e) => {
-  resetContainer();
-  constituencySearch.value = ''; 
-  const gssId = e.target.value;
-  if (gssId) {
-    fetchConstituencyResults(gssId);
-  } else {
-    resultsContainer.classList.add('hidden');
-  }
-});
-
-function filterConstituencies(selectElement) {
-  constituencySearch.value = '';
-  constituencySelect.value = '';
-  
-  const selectedRegion = selectElement.value;
-  const constituencies = constituencySelect.querySelectorAll('option');
-  const firstConstituency = document.getElementById('first-constituency');
-  firstConstituency.textContent = `${selectedRegion} Constituencies`;
-  firstConstituency.value = '';
-
-  constituencies.forEach(option => {
-    const constituencyName = option.textContent;
-    const isInRegion = regionData.some(item => item.Constituency === constituencyName && item.Region === selectedRegion);
-    if (!isInRegion) {
-      option.classList.add('hidden');
-    } else {
-      option.classList.remove('hidden');
-    }
-  });
-}
 
 function resetContainer(){
   resultsContainer.classList.add('hidden');
@@ -400,18 +288,9 @@ function resetContainer(){
 }
 
 function clearResults(){
-  regionSelect.value='';
-  constituencySelect.value = '';
   constituencySearch.value = '';
-  const firstConstituency = document.getElementById('first-constituency');
-  firstConstituency.innerText = 'Select Constituency';
   resetContainer();
-  const constituencies = constituencySelect.querySelectorAll('option');
-  constituencies.forEach(option => {
-    option.classList.remove('hidden'); 
-  });
 }
 
 populateCountyDropdown();
-populateRegionDropdown();
 fetchConstituencies().then(() => autocomplete(constituencySearch, constituenciesList));

@@ -38,7 +38,7 @@
         <option value="">Select County</option>
       </select>
     </div>
-    <div>
+    <!-- <div>
       <select class="border-2 w-48 p-2 truncate" onchange="filterConstituencies(this)" id="region-select">
         <option value="">Select Region</option>
       </select>
@@ -47,7 +47,7 @@
       <select class="border-2 w-72 p-2 truncate" id="constituency-select">
         <option value="">Select Constituency</option>
       </select>
-    </div>
+    </div> -->
 
     <div>
       <input class="border-2 w-[275px] p-2" type="text" id="constituency-search" placeholder="Start typing a constituency name..." autocomplete="off">
@@ -58,23 +58,7 @@
   </div>
 
   <div class="h-screen">
-  <div id="results-container" class="hidden">
-    <h2 id="constituency-name" class="text-lg font-semibold mt-8 mb-3"></h2>
-
-    <table class="w-full mt-2 text-center text-sm">
-      <thead class="bg-gray-100">
-        <tr class="divide-x">
-          <th class="font-medium px-4 py-3">Party</th>
-          <th class="font-medium px-4 py-3">Candidate Name</th>
-          <th class="font-medium px-4 py-3">Votes</th>
-          <th class="font-medium px-4 py-3">% Share</th>
-        </tr>
-      </thead>
-      <tbody id="results-table-body" class="divide-y">
-      </tbody>
-    </table>
-    <p class="text-sm mt-5">Turnout: <span id="turnout"></span></p>
-  </div>
+    <div id="results-container" class="hidden"></div>
   </div>
 
   <div id="county-results-container" class="hidden"></div>
