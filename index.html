@@ -14,16 +14,12 @@
       <h1 class="text-2xl font-bold my-8">UK General Election Results</h1>
       
       <div id="uk-highcharts" class="min-h-96"></div>
-
-      <div v-if="loading" class="text-center text-gray-500">
-        Loading overall election results...
-      </div>
   
       <div v-if="error" class="text-red-500 text-center">
         {{ error }}
       </div>
   
-      <div v-if="!loading && !error" class="grid grid-cols-6 mb-8 mx-2">      
+      <div v-if="!error" class="grid grid-cols-6 mb-8 mx-2 transition-opacity transform duration-500 ease-in-out opacity-0 translate-y-4 min-h-20" :class="{ 'opacity-100 translate-y-0': hasLoaded }">      
         <div v-for="result in results" :key="result.party" class="flex flex-col font-bold items-center" :style="{ backgroundColor: getPartyColour(result.partyCode).background}">
           <div class="px-4 py-2" :style="{ color: getPartyColour(result.partyCode).text }">{{ result.partyCode }}</div>
           <div  class="px-4 py-2 w-full text-center" :style="{ backgroundColor: getPartyColour(result.partyCode).lightBackground }">{{ result.seats }}</div>
@@ -31,9 +27,9 @@
       </div>
       
 
-  <div class="flex space-x-3 items-end justify-between">
+  <div class="flex space-x-3 items-end justify-between min-h-11">
     <div>
-      <select class="border-2 p-2 truncate" onchange="" id="county-select">
+      <select class="border-2 p-2 truncate w-72" onchange="" id="county-select">
         <option value="">Select County</option>
       </select>
     </div>

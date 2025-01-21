@@ -122,6 +122,7 @@ const resultsTableApp = createApp({
       results: [],
       loading: true, 
       error: null, 
+      hasLoaded: false,
     };
   },
   computed: {
@@ -153,6 +154,9 @@ const resultsTableApp = createApp({
           }))
           .sort((a, b) => b.seats - a.seats);
         this.loading = false;
+        setTimeout(() => {
+          this.hasLoaded = true;
+        }, 400); 
       })
       .catch((error) => {
         this.error = error.message;
