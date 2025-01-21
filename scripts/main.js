@@ -85,7 +85,8 @@ async function displayConstituencyResults(county) {
 
     if (!constituenciesInCounty || constituenciesInCounty.length === 0) return;
 
-    resultsContainer.innerHTML = '';
+    constituencySearch.value= '';
+    resetContainer();
 
     for (const constituency of constituenciesInCounty) {
      await fetchConstituencyResults(constituency.gssId);
@@ -125,8 +126,8 @@ const autocomplete = (input, list) => {
           item.innerHTML += `<input type="hidden" value="${name}">`;
   
           item.addEventListener('click', function () {
-            resultsContainer.innerHTML = '';
             countySelect.value= '';
+            resetContainer();
             input.value = name;
             closeAllLists();
             fetchConstituencyResults(gssId);
@@ -281,9 +282,11 @@ function displayResults(data) {
 
 
 function resetContainer(){
-  resultsContainer.classList.add('hidden');
-  resultsContainer.style.opacity = '0';
+  resultsContainer.style.transition = 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out';
   resultsContainer.style.transform = 'scale(0.9)';
+  resultsContainer.style.opacity = '0';
+  resultsContainer.classList.add('hidden');
+  resultsContainer.innerHTML = '';
 }
 
 function clearResults(){
