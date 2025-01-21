@@ -24,25 +24,26 @@
           <div class="px-4 py-2" :style="{ color: getPartyColour(result.partyCode).text }">{{ result.partyCode }}</div>
           <div  class="px-4 py-2 w-full text-center" :style="{ backgroundColor: getPartyColour(result.partyCode).lightBackground }">{{ result.seats }}</div>
         </div>
-      </div>
+      </div>   
       
 
-  <div class="flex space-x-3 items-end justify-between min-h-11">
-    <div>
-      <select class="border-2 p-2 truncate w-72" onchange="" id="county-select">
-        <option value="">Select County</option>
-      </select>
+    <div class="flex space-x-3 items-end justify-between min-h-11">
+      <div>
+        <select class="border-2 p-2 truncate w-72" onchange="" id="county-select">
+          <option value="">Select County</option>
+        </select>
+      </div>
+      <div>
+        <input class="border-2 w-[400px] p-2" type="text" id="constituency-search" placeholder="Start typing a constituency name..." autocomplete="off">
+      </div>
+      <div class="border-2 p-2 text-gray-500 cursor-pointer hover:underline" onclick="clearResults()">
+        Clear 
+      </div>
     </div>
-    <div>
-      <input class="border-2 w-[400px] p-2" type="text" id="constituency-search" placeholder="Start typing a constituency name..." autocomplete="off">
-    </div>
-    <div class="border-2 p-2 text-gray-500 cursor-pointer hover:underline" onclick="clearResults()">
-      Clear 
-    </div>
-  </div>
 
-  <div class="min-h-[500px]">
-    <div id="results-container" class="hidden"></div>
+    <div class="min-h-[500px]">
+      <div id="results-container" class="hidden"></div>
+    </div>
   </div>
 
   <script src="./scripts/uk-results.js"></script>

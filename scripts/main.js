@@ -54,10 +54,10 @@ async function populateCountyDropdown() {
     const response = await fetch(`${API_BASE_URL}/constituencies`, {
       headers: { "x-api-key": API_KEY },
     });
-    constituencyData = await response.json();
-    if (!constituencyData || constituencyData.length === 0) return;
+    constituenciesData = await response.json();
+    if (!constituenciesData || constituenciesData.length === 0) return;
 
-    const uniqueCounties = [...new Set(constituencyData.map(item => item.county))].sort();
+    const uniqueCounties = [...new Set(constituenciesData.map(item => item.county))].sort();
     countySelect.innerHTML = '<option value="">Select County</option>';
 
     uniqueCounties.forEach(county => {
@@ -81,7 +81,7 @@ async function populateCountyDropdown() {
 
 async function displayConstituencyResults(county) {
   try {
-    const constituenciesInCounty = constituencyData.filter(item => item.county === county);
+    const constituenciesInCounty = constituenciesData.filter(item => item.county === county);
 
     if (!constituenciesInCounty || constituenciesInCounty.length === 0) return;
 
@@ -103,14 +103,12 @@ function prepareAutocompleteData() {
 
 
 const autocomplete = (input, list) => {
-    let currentFocus;
   
     input.addEventListener('input', function () {
       const val = this.value;
       closeAllLists();
       if (!val) return false;
   
-      currentFocus = -1;
       const listContainer = document.createElement('div');
       listContainer.setAttribute('id', `${this.id}-autocomplete-list`);
       listContainer.setAttribute('class', 'autocomplete-items absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg divide-y');
@@ -136,32 +134,6 @@ const autocomplete = (input, list) => {
           listContainer.appendChild(item);
         });
     });
-  
-input.addEventListener('keydown', function (e) {
-  const listItems = document.querySelectorAll(`#${this.id}-autocomplete-list div`);
-  if (e.keyCode === 40) {
-    currentFocus++;
-    addActive(listItems);
-  } else if (e.keyCode === 38) {
-    currentFocus--;
-    addActive(listItems);
-  } else if (e.keyCode === 13) {
-    e.preventDefault();
-    if (currentFocus > -1) listItems[currentFocus].click();
-  }
-});
-
-function addActive(items) {
-    if (!items) return false;
-    removeActive(items);
-    if (currentFocus >= items.length) currentFocus = 0;
-    if (currentFocus < 0) currentFocus = items.length - 1;
-    items[currentFocus].classList.add('autocomplete-active');
-  }
-
-  function removeActive(items) {
-    items.forEach((item) => item.classList.remove('autocomplete-active'));
-  }
 
   function closeAllLists(elmnt) {
     const items = document.querySelectorAll('.autocomplete-items');
