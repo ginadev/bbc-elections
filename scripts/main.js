@@ -28,22 +28,23 @@ const PARTY_COLOURS = new Map([
 const resultsContainer = document.getElementById('results-container');
 const countySelect = document.getElementById('county-select');
 const constituencySearch = document.getElementById('constituency-search');
+let constituenciesData = [];
 let constituenciesList = [];
-let constituencyData;
-const constituencyOverrides = {};
 
 
-async function fetchConstituencies() {
+async function fetchConstituencyData() {
   try {
     const response = await fetch(`${API_BASE_URL}/constituencies`, {
       headers: { "x-api-key": API_KEY },
     });
-    const constituencies = await response.json();
-    constituenciesList = constituencies.map(({ gssId, name }) => ({ gssId, name }));
+    constituenciesData = await response.json();
+    if (!constituenciesData || constituenciesData.length === 0) return;
 
+    populateCountyDropdown();
+    prepareAutocompleteData();
   } catch (error) {
-    console.error("Error fetching constituencies:", error);
-    alert("Failed to load constituencies.");
+    console.error("Error fetching constituency data:", error);
+    alert("Failed to load constituency data.");
   }
 }
 
@@ -78,7 +79,6 @@ async function populateCountyDropdown() {
   }
 }
 
-
 async function displayConstituencyResults(county) {
   try {
     const constituenciesInCounty = constituencyData.filter(item => item.county === county);
@@ -95,8 +95,13 @@ async function displayConstituencyResults(county) {
   }
 }
 
+function prepareAutocompleteData() {
+  constituenciesList = constituenciesData.map(({ gssId, name }) => ({ gssId, name }));
+  autocomplete(constituencySearch, constituenciesList);
+}
 
-  const autocomplete = (input, list) => {
+
+const autocomplete = (input, list) => {
     let currentFocus;
   
     input.addEventListener('input', function () {
@@ -131,45 +136,43 @@ async function displayConstituencyResults(county) {
         });
     });
   
-    input.addEventListener('keydown', function (e) {
-      const listItems = document.querySelectorAll(`#${this.id}-autocomplete-list div`);
-      if (e.keyCode === 40) {
-        currentFocus++;
-        addActive(listItems);
-      } else if (e.keyCode === 38) {
-        currentFocus--;
-        addActive(listItems);
-      } else if (e.keyCode === 13) {
-        e.preventDefault();
-        if (currentFocus > -1) listItems[currentFocus].click();
-      }
+input.addEventListener('keydown', function (e) {
+  const listItems = document.querySelectorAll(`#${this.id}-autocomplete-list div`);
+  if (e.keyCode === 40) {
+    currentFocus++;
+    addActive(listItems);
+  } else if (e.keyCode === 38) {
+    currentFocus--;
+    addActive(listItems);
+  } else if (e.keyCode === 13) {
+    e.preventDefault();
+    if (currentFocus > -1) listItems[currentFocus].click();
+  }
+});
+
+function addActive(items) {
+    if (!items) return false;
+    removeActive(items);
+    if (currentFocus >= items.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = items.length - 1;
+    items[currentFocus].classList.add('autocomplete-active');
+  }
+
+  function removeActive(items) {
+    items.forEach((item) => item.classList.remove('autocomplete-active'));
+  }
+
+  function closeAllLists(elmnt) {
+    const items = document.querySelectorAll('.autocomplete-items');
+    items.forEach((item) => {
+      if (elmnt !== item && elmnt !== input) item.remove();
     });
+  }
 
-    function addActive(items) {
-        if (!items) return false;
-        removeActive(items);
-        if (currentFocus >= items.length) currentFocus = 0;
-        if (currentFocus < 0) currentFocus = items.length - 1;
-        items[currentFocus].classList.add('autocomplete-active');
-      }
-    
-      function removeActive(items) {
-        items.forEach((item) => item.classList.remove('autocomplete-active'));
-      }
-    
-      function closeAllLists(elmnt) {
-        const items = document.querySelectorAll('.autocomplete-items');
-        items.forEach((item) => {
-          if (elmnt !== item && elmnt !== input) item.remove();
-        });
-      }
-    
-      document.addEventListener('click', function (e) {
-        closeAllLists(e.target);
-      });
-    };
-
-  
+  document.addEventListener('click', function (e) {
+    closeAllLists(e.target);
+  });
+};
 
 async function fetchConstituencyResults(gssId) {
   try {
@@ -289,5 +292,4 @@ function clearResults(){
   resetContainer();
 }
 
-populateCountyDropdown();
-fetchConstituencies().then(() => autocomplete(constituencySearch, constituenciesList));
+fetchConstituencyData();
