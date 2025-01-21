@@ -26,14 +26,9 @@ const PARTY_COLOURS = new Map([
 ]);
 
 const resultsContainer = document.getElementById('results-container');
-const countyResultsContainer = document.getElementById('county-results-container');
 const countySelect = document.getElementById('county-select');
-const resultsTableBody = document.getElementById('results-table-body');
-const resultsChartEl = document.getElementById('results-chart');
 const constituencySearch = document.getElementById('constituency-search');
-let resultsChart;
 let constituenciesList = [];
-let regionData;
 let constituencyData;
 const constituencyOverrides = {};
 
@@ -59,7 +54,6 @@ async function populateCountyDropdown() {
       headers: { "x-api-key": API_KEY },
     });
     constituencyData = await response.json();
-    console.log(constituencyData);
     if (!constituencyData || constituencyData.length === 0) return;
 
     const uniqueCounties = [...new Set(constituencyData.map(item => item.county))].sort();
@@ -121,7 +115,7 @@ async function displayConstituencyResults(county) {
         .forEach(({ gssId, name }) => {
           const item = document.createElement('div');
           item.classList.add('cursor-pointer', 'hover:underline', 'p-2')
-          item.innerHTML = `<strong>${name.substr(0, val.length)}</strong>${name.substr(val.length)}`;
+          item.innerHTML = `${name.substr(0, val.length)}${name.substr(val.length)}`;
           item.dataset.gssId = gssId;
           item.innerHTML += `<input type="hidden" value="${name}">`;
   
@@ -264,7 +258,7 @@ function displayResults(data) {
   table.appendChild(tbody);
 
   const turnoutEl = document.createElement('p');
-  turnoutEl.className = 'text-sm mt-5';
+  turnoutEl.className = 'text-sm mt-5 mb-14';
   turnoutEl.innerHTML = `Turnout: <span>${turnout}</span>`;
 
   resultsContainer.appendChild(constituencyNameEl);
